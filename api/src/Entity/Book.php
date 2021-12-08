@@ -16,7 +16,11 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ApiResource(
     collectionOperations: [
         'get',
-        'post'
+        'post',
+        'get' => [
+            'path' => '/grimoire',
+            'status' => 200,
+        ],
     ],
     itemOperations: [
         'get',
