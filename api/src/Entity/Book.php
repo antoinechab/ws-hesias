@@ -6,6 +6,7 @@ use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Repository\BookRepository;
 use Doctrine\ORM\Mapping as ORM;
@@ -25,6 +26,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ApiFilter(SearchFilter::class, properties: ['title' => 'partial'])]
 #[ApiFilter(DateFilter::class, properties: ['publicationDate'])]
 #[ApiFilter(BooleanFilter::class, properties: ['visible'])]
+#[ApiFilter(OrderFilter::class, properties: ['title'=>'ASC'])]
 class Book
 {
     #[ORM\Id]
