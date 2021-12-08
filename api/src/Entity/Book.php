@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Repository\BookRepository;
@@ -23,6 +24,7 @@ use Doctrine\ORM\Mapping as ORM;
 )]
 #[ApiFilter(SearchFilter::class, properties: ['title' => 'partial'])]
 #[ApiFilter(DateFilter::class, properties: ['publicationDate'])]
+#[ApiFilter(BooleanFilter::class, properties: ['visible'])]
 class Book
 {
     #[ORM\Id]
@@ -49,6 +51,9 @@ class Book
 
     #[ORM\Column(type: 'string', length: 255)]
     private $title;
+
+    #[ORM\Column(type: 'boolean')]
+    private $visible;
 
     public function getId(): ?int
     {
@@ -123,6 +128,18 @@ class Book
     public function setTitle(string $title): self
     {
         $this->title = $title;
+
+        return $this;
+    }
+
+    public function getVisible(): ?bool
+    {
+        return $this->visible;
+    }
+
+    public function setVisible(bool $visible): self
+    {
+        $this->visible = $visible;
 
         return $this;
     }
