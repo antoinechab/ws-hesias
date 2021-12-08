@@ -10,6 +10,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Repository\BookRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: BookRepository::class)]
 #[ApiResource(
@@ -22,6 +23,8 @@ use Doctrine\ORM\Mapping as ORM;
         'delete',
         'put'
     ],
+    denormalizationContext: ['groups' => ['book:write']],
+    normalizationContext: ['groups' => ['book:read']],
 )]
 #[ApiFilter(SearchFilter::class, properties: ['title' => 'partial'])]
 #[ApiFilter(DateFilter::class, properties: ['publicationDate'])]
@@ -32,29 +35,37 @@ class Book
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
+    #[Groups(["book:write", "book:write"])]
     private $id;
 
     #[ORM\Column(type: 'integer')]
+    #[Groups(["book:write", "book:write"])]
     private $nbPages;
 
     #[ORM\Column(type: 'datetime')]
+    #[Groups(["book:write", "book:write"])]
     private $publicationDate;
 
     #[ORM\Column(type: 'text', nullable: true)]
+    #[Groups(["book:write", "book:write"])]
     private $resum;
 
     #[ORM\ManyToOne(targetEntity: Author::class, inversedBy: 'books')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(["book:read"])]
     private $author;
 
     #[ORM\ManyToOne(targetEntity: Editor::class, inversedBy: 'books')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(["book:read"])]
     private $editor;
 
     #[ORM\Column(type: 'string', length: 255)]
+    #[Groups(["book:write", "book:write"])]
     private $title;
 
     #[ORM\Column(type: 'boolean')]
+    #[Groups(["book:write", "book:write"])]
     private $visible;
 
     public function getId(): ?int
