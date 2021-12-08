@@ -2,12 +2,25 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Repository\BookRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: BookRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    collectionOperations: [
+        'get',
+        'post'
+    ],
+    itemOperations: [
+        'get',
+        'delete',
+        'put'
+    ],
+)]
+#[ApiFilter(SearchFilter::class, properties: ['title' => 'partial'])]
 class Book
 {
     #[ORM\Id]
@@ -31,6 +44,9 @@ class Book
     #[ORM\ManyToOne(targetEntity: Editor::class, inversedBy: 'books')]
     #[ORM\JoinColumn(nullable: false)]
     private $editor;
+
+    #[ORM\Column(type: 'string', length: 255)]
+    private $title;
 
     public function getId(): ?int
     {
@@ -93,6 +109,18 @@ class Book
     public function setEditor(?Editor $editor): self
     {
         $this->editor = $editor;
+
+        return $this;
+    }
+
+    public function getTitle(): ?string
+    {
+        return $this->title;
+    }
+
+    public function setTitle(string $title): self
+    {
+        $this->title = $title;
 
         return $this;
     }
