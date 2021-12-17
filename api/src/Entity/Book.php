@@ -8,6 +8,8 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use App\DTO\BookInput;
+use App\DTO\BookOutput;
 use App\Repository\BookRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -17,7 +19,9 @@ use Symfony\Component\Serializer\Annotation\Groups;
     collectionOperations: [
         'get',
         'post',
-        'get' => [
+        'get',
+        'get_grimoire' => [
+            'method' => 'GET',
             'path' => '/grimoire',
             'status' => 200,
         ],
@@ -28,7 +32,9 @@ use Symfony\Component\Serializer\Annotation\Groups;
         'put'
     ],
     denormalizationContext: ['groups' => ['book:write']],
+    //input: BookInput::class,
     normalizationContext: ['groups' => ['book:read']],
+    //output: BookOutput::class
 )]
 #[ApiFilter(SearchFilter::class, properties: ['title' => 'partial'])]
 #[ApiFilter(DateFilter::class, properties: ['publicationDate'])]
@@ -56,11 +62,13 @@ class Book
 
     #[ORM\ManyToOne(targetEntity: Author::class, inversedBy: 'books')]
     #[ORM\JoinColumn(nullable: false)]
+    #[ORM\Column(nullable: true)]
     #[Groups(["book:read"])]
     private $author;
 
     #[ORM\ManyToOne(targetEntity: Editor::class, inversedBy: 'books')]
     #[ORM\JoinColumn(nullable: false)]
+    #[ORM\Column(nullable: true)]
     #[Groups(["book:read"])]
     private $editor;
 
@@ -71,6 +79,9 @@ class Book
     #[ORM\Column(type: 'boolean')]
     #[Groups(["book:write", "book:write"])]
     private $visible;
+
+    #[Groups(["book:write", "book:write"])]
+    private $code;
 
     public function getId(): ?int
     {
@@ -157,6 +168,18 @@ class Book
     public function setVisible(bool $visible): self
     {
         $this->visible = $visible;
+
+        return $this;
+    }
+
+    public function getCode(): ?string
+    {
+        return $this->code;
+    }
+
+    public function setCode(?string $code): self
+    {
+        $this->code = $code;
 
         return $this;
     }
